@@ -2,13 +2,19 @@ import React from "react";
 
 import "./PlayNumber.css";
 
-const PlayNumber = ({ number }) => {
+import { colors } from "../../constants.js";
+
+const PlayNumber = ({ number, status, onNumberClick }) => {
   const handleOnClick = () => {
-    console.log("Number Clicked:", number);
+    onNumberClick(number, status);
   };
 
   return (
-    <button className="number" onClick={handleOnClick}>
+    <button
+      className="number"
+      onClick={handleOnClick}
+      style={{ backgroundColor: colors[status] }}
+    >
       {number}
     </button>
   );
