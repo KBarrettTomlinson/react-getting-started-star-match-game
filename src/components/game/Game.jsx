@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+
+import { useGameState } from "../../custom-hooks/useGameState";
 
 import utils from "../../utils";
 
@@ -9,21 +11,13 @@ import PlayAgain from "../play-again/PlayAgain";
 import "./Game.css";
 
 const Game = ({ startNewGame }) => {
-  const [stars, setStars] = useState(utils.random(1, 9));
-  const [availableNumbers, setAvailableNumbers] = useState(utils.range(1, 9));
-  const [candidateNumbers, setCandidateNumbers] = useState([]);
-  const [secondsLeft, setSecondsLeft] = useState(10);
-
-  useEffect(() => {
-    if (secondsLeft > 0 && availableNumbers.length > 0) {
-      const timerId = setTimeout(() => {
-        setSecondsLeft(secondsLeft - 1);
-      }, 1000);
-      return () => {
-        clearTimeout(timerId);
-      };
-    }
-  });
+  const {
+    stars,
+    availableNumbers,
+    candidateNumbers,
+    secondsLeft,
+    setGameState,
+  } = useGameState();
 
   const candidatesAreWrong = utils.sum(candidateNumbers) > stars;
 
@@ -58,16 +52,7 @@ const Game = ({ startNewGame }) => {
         ? candidateNumbers.concat(number)
         : candidateNumbers.filter((n) => n !== number);
 
-    if (utils.sum(newCandidateNumbers) !== stars) {
-      setCandidateNumbers(newCandidateNumbers);
-    } else {
-      const newAvailableNumbers = availableNumbers.filter(
-        (n) => !newCandidateNumbers.includes(n)
-      );
-      setStars(utils.randomSumIn(newAvailableNumbers, 9));
-      setAvailableNumbers(newAvailableNumbers);
-      setCandidateNumbers([]);
-    }
+    setGameState(newCandidateNumbers);
   };
 
   return (
